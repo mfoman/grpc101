@@ -8,7 +8,7 @@ RUN export GO111MODULE=on
 COPY go.mod /build
 COPY go.sum /build/
 
-RUN cd /build/ && git clone https://github.com/NaddiNadja/grpc101.git
+RUN cd /build/ && git clone https://github.com/mfoman/grpc101.git
 RUN cd /build/grpc101/server && go build ./...
 
 EXPOSE 9080

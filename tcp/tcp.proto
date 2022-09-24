@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package tcp;
+option go_package = "https://github.com/mfoman/grpc101;tcp";
+
+service tcpMessaging {
+    rpc sendMessage (Tcp) returns (Tcp);
+}
+
+message Tcp {
+    string source = 1;
+    string dest = 2;
+    string seq = 3;
+    string ack = 4;
+    string offset = 5;
+    string reserved = 6;
+    string flags = 7;
+    string window = 8;
+    string checksum = 9;
+    string urgentp = 10;
+    string options = 11;
+    string data = 12;
+}
