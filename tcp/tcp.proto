@@ -10,8 +10,8 @@ service tcpMessaging {
 message Tcp {
     string source = 1;
     string dest = 2;
-    string seq = 3;
-    string ack = 4;
+    int64 seq = 3;
+    int64 ack = 4;
     string offset = 5;
     string reserved = 6;
     string flags = 7;

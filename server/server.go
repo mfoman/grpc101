@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	t "time"
 
@@ -24,11 +25,15 @@ func (s *Server) GetTime(ctx context.Context, in *time.GetTimeRequest) (*time.Ge
 }
 
 func (s *Server) SendMessage(ctx context.Context, in *tcp.Tcp) (*tcp.Tcp, error) {
+	s1 := rand.NewSource(t.Now().UnixNano())
+    r1 := rand.New(s1)
+	seq := int64(r1.Intn(1_000_000) + 1_000_000)
+
 	message := tcp.Tcp {
-		Source: "you",
-		Dest: "me",
-		Seq: "random",
-		Ack: "",
+		Source: "127.0.0.1",
+		Dest: "127.0.0.1",
+		Seq: 0,
+		Ack: 0,
 		Offset: "",
 		Reserved: "",
 		Flags: "",
@@ -43,9 +48,14 @@ func (s *Server) SendMessage(ctx context.Context, in *tcp.Tcp) (*tcp.Tcp, error)
 	case "SYN":
 		fmt.Printf("Server: SYN received %s\n", in)
 		message.Flags = "SYN+ACK"
-	case "AWK":
-		fmt.Printf("Server: AWK received %s\n", in)
+		message.Seq = seq
+		message.Ack = in.Seq + 1
+		message.Data = "PIGGYBACKING"
+	case "ACK":
+		fmt.Printf("Server: ACK received %s\n", in)
 		message.Flags = "ACK"
+		message.Seq = in.Ack
+		message.Ack = in.Seq + 1
 	case "FIN":
 		fmt.Printf("Server: FIN received %s\n", in)
 		message.Flags = "FIN"

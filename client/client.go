@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 
 	t "time"
 
@@ -31,11 +32,15 @@ func TcpLoop(conn *grpc.ClientConn) {
 	//  Create new Client from generated gRPC code from proto
 	c := tcp.NewTcpMessagingClient(conn)
 
+	s1 := rand.NewSource(t.Now().UnixNano())
+    r1 := rand.New(s1)
+	seq := int64(r1.Intn(1_000_000) + 1_000_000)
+
 	SendTcpPackage(c, &tcp.Tcp{
-		Source:   "you",
-		Dest:     "me",
-		Seq:      "random",
-		Ack:      "",
+		Source:   "127.0.0.1",
+		Dest:     "127.0.0.1",
+		Seq:      seq,
+		Ack:      0,
 		Offset:   "",
 		Reserved: "",
 		Flags:    "SYN",
@@ -68,18 +73,18 @@ func SendTcpPackage(c tcp.TcpMessagingClient, message *tcp.Tcp) {
 
 	if res.Flags == "SYN+ACK" {
 		res, err = c.SendMessage(context.Background(), &tcp.Tcp{
-			Source:   "you",
-			Dest:     "me",
-			Seq:      "random",
-			Ack:      "",
+			Source:   "127.0.0.1",
+			Dest:     "127.0.0.1",
+			Seq:      res.Ack,
+			Ack:      res.Seq + 1,
 			Offset:   "",
 			Reserved: "",
-			Flags:    "AWK",
+			Flags:    "ACK",
 			Window:   "",
 			Checksum: "",
 			Urgentp:  "",
 			Options:  "",
-			Data:     "",
+			Data:     "TCP HANDSHAKE COMPLETE!",
 		})
 
 		if err != nil {
