@@ -1,4 +1,26 @@
-# gRPC 101
+# Assignment 2
+
+1. What are packages in your implementation? What data structure do you use to transmit data and meta-data?
+
+The packet (assuming that is what the question is referring to) we have used, is a simulation of a tcp header as seen in *tcp/tcp.proto*. The packet is transmitted with the protobuffer protocol from the gRPC pacakge.
+
+2. Does your implementation use threads or processes? Why is it not realistic to use threads?
+
+Our implementation use processes in which we communicate with gRPC (protobuffer). Threads are not realistic, because they don't use the underlying network devices to communicate.
+
+3. How do you handle message re-ordering?
+
+We could handle message re-ordering using a sequence number for each message sent, so the messages can be reordered on the receiving end.
+
+4. How do you handle message loss?
+
+We could handle message loss, by using timeouts for awaiting the acknowledgements, so if an acknowledgement isn't received within a time frame, a new request is sent.
+
+5. Why is the 3-way handshake important?
+
+To ensure a reliable connection and guarantee the data is sent correctly.
+
+## gRPC 101
 
 if you haven't installed google's protocol buffers, see the prerequisites part at the bottom.
 
